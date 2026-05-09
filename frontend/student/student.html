@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f7fc;
+}
+
+.sidebar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:250px;
+    height:100vh;
+    background:linear-gradient(180deg,#0d6efd,#0a58ca);
+    padding:30px 20px;
+    color:white;
+}
+
+.sidebar h2{
+    text-align:center;
+    margin-bottom:40px;
+    font-weight:bold;
+}
+
+.sidebar a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:white;
+    text-decoration:none;
+    padding:12px 15px;
+    border-radius:12px;
+    margin-bottom:12px;
+}
+
+.sidebar a:hover{
+    background:rgba(255,255,255,0.2);
+}
+
+.content{
+    margin-left:250px;
+    padding:30px;
+}
+
+.topbar{
+    background:white;
+    padding:15px 25px;
+    border-radius:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom:30px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.topbar-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.topbar-right img{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid #0d6efd;
+}
+
+.card-box{
+    padding:25px;
+    border-radius:20px;
+    color:white;
+    margin-bottom:20px;
+}
+
+.card1{background:linear-gradient(135deg,#36d1dc,#5b86e5);}
+.card2{background:linear-gradient(135deg,#ff9966,#ff5e62);}
+.card3{background:linear-gradient(135deg,#56ab2f,#a8e063);}
+.card4{background:linear-gradient(135deg,#614385,#516395);}
+
+.card-box h2{
+    font-size:32px;
+    font-weight:bold;
+}
+
+.info-card{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    margin-bottom:20px;
+}
+
+.table-box{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+<h2><i class="bi bi-mortarboard-fill"></i> Student</h2>
+
+<a href="student.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a href="profile.html"><i class="bi bi-person-circle"></i> Profile</a>
+<a href="attendance.html"><i class="bi bi-calendar-check"></i> Attendance</a>
+<a href="marks.html"><i class="bi bi-bar-chart-fill"></i> Marks</a>
+<a href="assignments.html"><i class="bi bi-journal-text"></i> Assignments</a>
+<a href="studentlogin.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
+
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="topbar-right">
+        <img src="profile image.jpg" alt="student">
+        <div>
+            <h4 id="studentName">Loading...</h4>
+            <p id="studentCourse">Loading...</p>
+        </div>
+    </div>
+</div>
+
+<h1 class="page-title">Student Dashboard</h1>
+
+<!-- CARDS -->
+<div class="row g-4">
+
+<div class="col-md-3">
+<div class="card-box card1">
+<h5>Attendance</h5>
+<h2 id="attendance">0</h2>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card-box card2">
+<h5>CGPA</h5>
+<h2 id="cgpa">0</h2>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card-box card3">
+<h5>Assignments</h5>
+<h2 id="assignments">0</h2>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card-box card4">
+<h5>Subjects</h5>
+<h2 id="subjects">0</h2>
+</div>
+</div>
+
+</div>
+
+<!-- NOTICE -->
+<div class="row mt-4">
+
+<div class="col-md-6">
+<div class="info-card">
+<h3>📢 Notice</h3>
+<p>Mid Semester Exams will start from next Monday.</p>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="info-card">
+<h3>💼 Placement</h3>
+<p>TCS Campus Drive registrations are now open.</p>
+</div>
+</div>
+
+</div>
+
+<!-- RESULTS -->
+<div class="table-box mt-4">
+
+<h3>Recent Results</h3>
+
+<table class="table table-hover">
+
+<thead class="table-primary">
+<tr>
+<th>Subject</th>
+<th>Marks</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="resultsTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+
+const token = localStorage.getItem("token");
+
+if (!token) {
+    alert("Session expired. Please login again.");
+    window.location.href = "studentlogin.html";
+}
+
+// =========================
+// FETCH PROFILE VIA JWT
+// =========================
+fetch("http://localhost:5001/api/student/profile", {
+    method: "GET",
+    headers: {
+        "Authorization": `Bearer ${token}`
+    }
+})
+.then(res => {
+    if (!res.ok) throw new Error("API Error");
+    return res.json();
+})
+.then(student => {
+
+    console.log("Student Data:", student);
+
+    // TOP BAR
+    document.getElementById("studentName").innerText = student.name || "N/A";
+    document.getElementById("studentCourse").innerText = student.course || "N/A";
+
+    // SAFE DATA
+    const attendance = Array.isArray(student.attendance)
+        ? student.attendance
+        : [];
+
+    const assignments = Array.isArray(student.assignments)
+        ? student.assignments
+        : [];
+
+    const marks = Array.isArray(student.marks)
+        ? student.marks
+        : [];
+
+    // =========================
+    // ATTENDANCE % FIX
+    // =========================
+    const total = attendance.length;
+
+    const present = attendance.filter(
+        a => a.status === "Present"
+    ).length;
+
+    const percentage =
+        total > 0 ? ((present / total) * 100).toFixed(2) : 0;
+
+    document.getElementById("attendance").innerText =
+        percentage + "%";
+
+    // OTHER CARDS
+    document.getElementById("assignments").innerText = assignments.length;
+    document.getElementById("cgpa").innerText = student.cgpa ?? "N/A";
+
+    document.getElementById("subjects").innerText =
+        [...new Set(attendance.map(a => a.subject))].length;
+
+    // TABLE
+    const table = document.getElementById("resultsTable");
+    table.innerHTML = "";
+
+    if (marks.length > 0) {
+        marks.forEach(m => {
+            table.innerHTML += `
+                <tr>
+                    <td>${m.subject || "-"}</td>
+                    <td>${m.marks ?? "-"}</td>
+                    <td>${m.marks >= 40 ? "Pass" : "Fail"}</td>
+                </tr>
+            `;
+        });
+    } else {
+        table.innerHTML = `<tr><td colspan="3">No marks available</td></tr>`;
+    }
+
+})
+.catch(err => {
+    console.error("Dashboard error:", err);
+    alert("Failed to load student data");
+});
+
+// =========================
+// SIDEBAR LINKS (NO studentId)
+// =========================
+document.querySelectorAll(".sidebar a").forEach(link => {
+
+    const href = link.getAttribute("href");
+
+    if (
+        href &&
+        !href.includes("studentlogin.html") &&
+        !href.includes("http")
+    ) {
+        link.setAttribute("href", href);
+    }
+});
+
+</script>
+
+</body>
+</html>
