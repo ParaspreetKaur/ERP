@@ -325,7 +325,7 @@ async function loadSubmissions() {
           <td>${s.title || 'N/A'}</td</td
           <td>${s.submittedAt ? new Date(s.submittedAt).toLocaleString() : 'N/A'}</td</td
           <td class="text-center">
-            ${s.fileUrl ? `<a href="http://localhost:5001/${s.fileUrl}" target="_blank" class="btn btn-sm btn-info">📄 View</a>` : 'No file'}
+            ${s.fileUrl ? `<a href="https://academic-management-backend-biar.onrender.com/${s.fileUrl}" target="_blank" class="btn btn-sm btn-info">📄 View</a>` : 'No file'}
           </td</td
           <td>
             <input type="number" id="marks-${s.submissionId}" class="form-control grade-input" 

@@ -7,7 +7,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
 
   try {
 
-    const res = await fetch("http://127.0.0.1:5001/api/teacher/login", {
+    const res = await fetch("https://academic-management-backend-biar.onrender.com/api/teacher/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
