@@ -3,6 +3,11 @@
 
 BCA Final Year Project by Paraspreet Kaur
 
+# Live Demo
+Project Link (Frontend): https://academic-management-frontend-eight.vercel.app/
+(backend): https://academic-management-backend-biar.onrender.com/
+
+
 # Features
 
 Student Portal
