@@ -166,26 +166,25 @@
     </div>
 
     <div class="table-responsive">
-      <table class="table table-bordered table-hover">
-        <thead class="table-primary">
-          <tr>
-            <th>Student ID</th>
-            <th>Subject</th>
-            <th>Assignment</th>
-            <th>Submitted At</th>
-            <th>File</th>
-            <th>Marks (1–10)</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="submissionTable">
-          <tr>
-            <td colspan="7" class="text-center py-4 text-muted">No submissions yet</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Student ID</th>
+        <th>Student Name</th>
+        <th>Subject</th>
+        <th>Assignment</th>
+        <th>Submitted At</th>
+        <th>File</th>
+        <th>Marks (1-10)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="submissionTable">
+      <tr>
+        <td colspan="8" class="text-center">No submissions yet</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 <script>
@@ -308,7 +307,7 @@ async function loadSubmissions() {
     if (submissions.length === 0) {
       table.innerHTML = `
         <tr>
-          <td colspan="7" class="text-center text-muted py-4">
+          <td colspan="8" class="text-center text-muted py-4">
             No submissions yet
            </td
         </tr>
@@ -320,24 +319,25 @@ async function loadSubmissions() {
     submissions.forEach(s => {
       html += `
         <tr>
-          <td>${s.studentId || 'N/A'}</td</td
-          <td>${s.subject || 'N/A'}</td</td
-          <td>${s.title || 'N/A'}</td</td
-          <td>${s.submittedAt ? new Date(s.submittedAt).toLocaleString() : 'N/A'}</td</td
+          <td>${s.studentId || 'N/A'}</td>
+          <td>${s.studentName || 'N/A'}</td>
+          <td>${s.subject || 'N/A'}</td>
+          <td>${s.title || 'N/A'}</td>
+          <td>${s.submittedAt ? new Date(s.submittedAt).toLocaleString() : 'N/A'}</td>
           <td class="text-center">
-            ${s.fileUrl ? `<a href="https://academic-management-backend-biar.onrender.com/${s.fileUrl}" target="_blank" class="btn btn-sm btn-info">📄 View</a>` : 'No file'}
-          </td</td
+            ${s.fileUrl ? `<a href="${API_URL.replace('/api', '')}/${s.fileUrl}" target="_blank" class="btn btn-sm btn-info">View File</a>` : 'No file'}
+          </td>
           <td>
-            <input type="number" id="marks-${s.submissionId}" class="form-control grade-input" 
+            <input type="number" id="marks-${s.submissionId}" class="form-control" 
                    min="1" max="10" step="1" 
                    value="${s.marks || ''}"
-                   placeholder="1-10">
-           </td</td
+                   placeholder="1-10" style="width: 80px;">
+          </td>
           <td class="text-center">
             <button class="btn btn-success btn-sm" onclick="saveMarks('${s.submissionId}')">
-              <i class="bi bi-save"></i> Save
+              Save Grade
             </button>
-          </td</td
+          </td>
         </tr>
       `;
     });
@@ -349,7 +349,7 @@ async function loadSubmissions() {
     const table = document.getElementById("submissionTable");
     table.innerHTML = `
       <tr>
-        <td colspan="7" class="text-center text-danger py-4">
+        <td colspan="8" class="text-center text-danger py-4">
           Failed to load submissions: ${err.message}
         </td
       </tr>
@@ -410,5 +410,5 @@ async function saveMarks(submissionId) {
 loadSubjects();
 loadSubmissions();
 </script>
-</body>
+<script>function logout(){localStorage.clear();window.location.replace("../index.html");}window.addEventListener("pageshow",function(event){if(event.persisted && !localStorage.getItem("token")){window.location.replace("../index.html");}});</script></body>
 </html>

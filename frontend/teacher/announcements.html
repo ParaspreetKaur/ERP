@@ -257,5 +257,5 @@ async function deleteAnnouncement(announcementId) {
 
 loadAnnouncements();
 </script>
-</body>
+<script>function logout(){localStorage.clear();window.location.replace("../index.html");}window.addEventListener("pageshow",function(event){if(event.persisted && !localStorage.getItem("token")){window.location.replace("../index.html");}});</script></body>
 </html>
