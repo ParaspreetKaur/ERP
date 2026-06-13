@@ -4,8 +4,17 @@ const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 require("./models/Announcement");
+const path = require('path');
 
 const app = express();
+
+// Serve static files from frontend
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Also serve frontend when someone visits root URL
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 app.use(express.json());
 
@@ -23,7 +32,6 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log("DB Error:", err));
 
-
 // ROUTES 
 const studentRoutes = require("./routes/student");
 const teacherRoutes = require("./routes/teacher");
@@ -38,7 +46,7 @@ app.get("/test", (req, res) => {
 });
 
 // START SERVER
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
