@@ -1,106 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>College ERP System</title>
-
-    <!-- Bootstrap -->
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- CSS -->
-
-    <link rel="stylesheet" href="style.css">
-
+    <title>College ERP System | Academic Management Platform</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #4e73df 0%, #1cc88a 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-shape {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 20s infinite;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+        }
+        
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 5s;
+        }
+        
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 50%;
+            animation-delay: 10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(5deg); }
+            75% { transform: translate(-20px, 20px) rotate(-5deg); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* Header Section */
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-section h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-section p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.95);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Portal Cards */
+        .portal-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin: 30px 0 50px;
+        }
+        
+        .portal-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px 35px;
+            width: 500px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .portal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .portal-card:hover::before {
+            left: 100%;
+        }
+        
+        .portal-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            font-size: 38px;
+            transition: 0.3s;
+        }
+        
+        .portal-card:hover .icon-box {
+            transform: scale(1.05);
+        }
+        
+        .portal-card h3 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+        
+        .portal-card p {
+            font-size: 14px;
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .feature-list {
+            text-align: left;
+            margin-bottom: 25px;
+            padding-left: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .feature-list li {
+            font-size: 13px;
+            color: #555;
+            list-style: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8f9fa;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        
+        .feature-list li i {
+            color: #1cc88a;
+            font-size: 12px;
+        }
+        
+        .btn-login {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            color: white;
+            text-decoration: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(78, 115, 223, 0.3);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .portal-card {
+                width: 450px;
+                padding: 25px 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header-section h1 {
+                font-size: 32px;
+            }
+            
+            .header-section p {
+                font-size: 16px;
+            }
+            
+            .portal-card {
+                width: 100%;
+                max-width: 450px;
+                padding: 25px 20px;
+            }
+            
+            .icon-box {
+                width: 70px;
+                height: 70px;
+                font-size: 32px;
+            }
+            
+            .portal-card h3 {
+                font-size: 22px;
+            }
+        }
+    </style>
 </head>
+<body>
 
-<body class="login-body">
+<!-- Animated Background -->
+<div class="bg-shape">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+</div>
 
-    <div class="overlay"></div>
+<div class="container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <div class="logo">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <h1>Academic Management System</h1>
+        <p>Academic management platform for seamless student-teacher collaboration</p>
+    </div>
 
-    <div class="container">
-
-        <div class="row min-vh-100 align-items-center">
-
-            <!-- LEFT -->
-
-            <div class="col-md-6">
-
-                <div class="hero-section">
-
-                    <h1>
-                        College ERP System
-                    </h1>
-
-                    <p>
-                        Smart platform to manage attendance, marks, assignments and student activities.
-                    </p>
-
-                </div>
-
+    <!-- Portal Cards -->
+    <div class="portal-container">
+        <!-- Student Portal -->
+        <div class="portal-card">
+            <div class="icon-box">
+                <i class="bi bi-person-fill"></i>
             </div>
-
-            <!-- RIGHT -->
-
-            <div class="col-md-6">
-
-                <div class="portal-container">
-
-                    <!-- STUDENT -->
-
-                    <div class="portal-card">
-
-                        <div class="portal-icon">
-                            🎓
-                        </div>
-
-                        <h3>
-                            Student Login
-                        </h3>
-
-                        <p>
-                            Access attendance, marks, assignments and profile details.
-                        </p>
-
-                        <a href="student/studentlogin.html" class="btn btn-primary portal-btn">
-                            Login as Student
-                        </a>
-
-                    </div>
-
-                    <!-- TEACHER -->
-
-                    <div class="portal-card">
-
-                        <div class="portal-icon">
-                            👨‍🏫
-                        </div>
-
-                        <h3>
-                            Teacher Login
-                        </h3>
-
-                        <p>
-                            Manage attendance, marks and academic activities.
-                        </p>
-
-                        <a href="teacher/teacher.html" class="btn btn-dark portal-btn">
-                            Login as Teacher
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+            <h3>Student Portal</h3>
+            <p>Complete access to your academic journey</p>
+            <ul class="feature-list">
+                <li><i class="bi bi-check-circle-fill"></i> Attendance</li>
+                <li><i class="bi bi-check-circle-fill"></i> Marks & CGPA</li>
+                <li><i class="bi bi-check-circle-fill"></i> Assignments</li>
+                <li><i class="bi bi-check-circle-fill"></i> Announcements</li>
+            </ul>
+            <a href="student/studentlogin.html" class="btn-login">
+                <i class="bi bi-box-arrow-in-right"></i> Login as Student
+            </a>
         </div>
 
+        <!-- Teacher Portal -->
+        <div class="portal-card">
+            <div class="icon-box">
+                <i class="bi bi-person-workspace"></i>
+            </div>
+            <h3>Teacher Portal</h3>
+            <p>Powerful tools to manage your classes</p>
+            <ul class="feature-list">
+                <li><i class="bi bi-check-circle-fill"></i> Attendance</li>
+                <li><i class="bi bi-check-circle-fill"></i> Marks Entry</li>
+                <li><i class="bi bi-check-circle-fill"></i> Assignments</li>
+                <li><i class="bi bi-check-circle-fill"></i> Announcements</li>
+            </ul>
+            <a href="teacher/login.html" class="btn-login">
+                <i class="bi bi-box-arrow-in-right"></i> Login as Teacher
+            </a>
+        </div>
     </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong>Academic Management System</strong> &copy; 2026 | All Rights Reserved | Empowering Education Through Technology<br><center>By Paraspreet Kaur</center></p>
+    </div>
+</div>
 
 </body>
 </html>

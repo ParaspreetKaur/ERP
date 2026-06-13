@@ -25,6 +25,7 @@ body{
     background:linear-gradient(180deg,#0d6efd,#0a58ca);
     padding:30px 20px;
     color:white;
+    z-index:1000;
 }
 
 .sidebar h2{
@@ -42,6 +43,7 @@ body{
     padding:12px 15px;
     border-radius:12px;
     margin-bottom:12px;
+    transition:0.3s;
 }
 
 .sidebar a:hover{
@@ -51,6 +53,7 @@ body{
 .content{
     margin-left:250px;
     padding:30px;
+    min-height:100vh;
 }
 
 .topbar{
@@ -69,11 +72,16 @@ body{
     gap:15px;
 }
 
-.topbar-right img{
+.avatar-placeholder{
     width:55px;
     height:55px;
+    background:linear-gradient(135deg,#36d1dc,#5b86e5);
     border-radius:50%;
-    object-fit:cover;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:24px;
     border:3px solid #0d6efd;
 }
 
@@ -82,6 +90,11 @@ body{
     border-radius:20px;
     color:white;
     margin-bottom:20px;
+    transition:transform 0.3s;
+}
+
+.card-box:hover{
+    transform:translateY(-5px);
 }
 
 .card1{background:linear-gradient(135deg,#36d1dc,#5b86e5);}
@@ -92,6 +105,7 @@ body{
 .card-box h2{
     font-size:32px;
     font-weight:bold;
+    margin:10px 0 0;
 }
 
 .info-card{
@@ -99,229 +113,410 @@ body{
     padding:25px;
     border-radius:20px;
     margin-bottom:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
 .table-box{
     background:white;
     padding:25px;
     border-radius:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.page-title{
+    font-size:28px;
+    font-weight:bold;
+    margin:20px 0;
+    color:#1a1a2e;
+}
+
+.loading-spinner{
+    text-align:center;
+    padding:40px;
+    color:#666;
+}
+
+.refresh-btn{
+    background:#0d6efd;
+    border:none;
+    padding:5px 15px;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.refresh-btn:hover{
+    background:#0a58ca;
 }
 </style>
 </head>
-
 <body>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-
-<h2><i class="bi bi-mortarboard-fill"></i> Student</h2>
-
-<a href="student.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
-<a href="profile.html"><i class="bi bi-person-circle"></i> Profile</a>
-<a href="attendance.html"><i class="bi bi-calendar-check"></i> Attendance</a>
-<a href="marks.html"><i class="bi bi-bar-chart-fill"></i> Marks</a>
-<a href="assignments.html"><i class="bi bi-journal-text"></i> Assignments</a>
-<a href="studentlogin.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
-
+    <h2><i class="bi bi-mortarboard-fill"></i> Student</h2>
+    <a href="student.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="profile.html"><i class="bi bi-person-circle"></i> Profile</a>
+    <a href="attendance.html"><i class="bi bi-calendar-check"></i> Attendance</a>
+    <a href="marks.html"><i class="bi bi-bar-chart-fill"></i> Marks</a>
+    <a href="assignments.html"><i class="bi bi-journal-text"></i> Assignments</a>
+    <a href="#" onclick="logout(); return false;"><i class="bi bi-box-arrow-right"></i> Logout</a>
 </div>
 
 <!-- MAIN CONTENT -->
 <div class="content">
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="topbar-right">
+            <div style="width: 55px; height: 55px; background: linear-gradient(135deg, #36d1dc, #5b86e5); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 3px solid #0d6efd;">
+                <i class="bi bi-person-fill fs-3"></i>
+            </div>
+            <div>
+                <h4 id="studentName">Loading...</h4>
+                <p id="studentCourse">Loading...</p>
+            </div>
+        </div>
+    </div>
 
-<!-- TOPBAR -->
-<div class="topbar">
-    <div class="topbar-right">
-        <img src="profile image.jpg" alt="student">
-        <div>
-            <h4 id="studentName">Loading...</h4>
-            <p id="studentCourse">Loading...</p>
+    <h1 class="page-title">Student Dashboard</h1>
+
+    <!-- CARDS -->
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card-box card1">
+                <h5><i class="bi bi-calendar-check"></i> Attendance</h5>
+                <h2 id="attendance">0%</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-box card2">
+                <h5><i class="bi bi-star"></i> CGPA</h5>
+                <h2 id="cgpa">0.0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-box card3">
+                <h5><i class="bi bi-journal-text"></i> Assignments</h5>
+                <h2 id="assignments">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-box card4">
+                <h5><i class="bi bi-book"></i> Subjects</h5>
+                <h2 id="subjects">0</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Assignments Section -->
+    <div class="info-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="bi bi-journal-text"></i> Pending Assignments</h5>
+            <button class="refresh-btn" onclick="loadPendingAssignments()">
+                <i class="bi bi-arrow-repeat"></i> Refresh
+            </button>
+        </div>
+        <div id="pendingAssignmentsList">
+            <div class="loading-spinner">Loading assignments...</div>
+        </div>
+    </div>
+
+    <!-- Announcements Section -->
+    <div class="info-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="bi bi-megaphone"></i> Latest Announcements</h5>
+            <button class="refresh-btn" onclick="loadAnnouncements()">
+                <i class="bi bi-arrow-repeat"></i> Refresh
+            </button>
+        </div>
+        <div id="announcementsContainer">
+            <div class="loading-spinner">Loading announcements...</div>
+        </div>
+    </div>
+
+    <!-- Recent Marks Section -->
+    <div class="table-box">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Recent Marks</h5>
+            <a href="marks.html" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Subject</th>
+                        <th>Exam Type</th>
+                        <th>Marks Obtained</th>
+                        <th>Max Marks</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="marksTable">
+                    <tr><td colspan="6" class="text-center">Loading marks...</td</tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<h1 class="page-title">Student Dashboard</h1>
-
-<!-- CARDS -->
-<div class="row g-4">
-
-<div class="col-md-3">
-<div class="card-box card1">
-<h5>Attendance</h5>
-<h2 id="attendance">0</h2>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card-box card2">
-<h5>CGPA</h5>
-<h2 id="cgpa">0</h2>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card-box card3">
-<h5>Assignments</h5>
-<h2 id="assignments">0</h2>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card-box card4">
-<h5>Subjects</h5>
-<h2 id="subjects">0</h2>
-</div>
-</div>
-
-</div>
-
-<!-- NOTICE -->
-<div class="row mt-4">
-
-<div class="col-md-6">
-<div class="info-card">
-<h3>📢 Notice</h3>
-<p>Mid Semester Exams will start from next Monday.</p>
-</div>
-</div>
-
-<div class="col-md-6">
-<div class="info-card">
-<h3>💼 Placement</h3>
-<p>TCS Campus Drive registrations are now open.</p>
-</div>
-</div>
-
-</div>
-
-<!-- RESULTS -->
-<div class="table-box mt-4">
-
-<h3>Recent Results</h3>
-
-<table class="table table-hover">
-
-<thead class="table-primary">
-<tr>
-<th>Subject</th>
-<th>Marks</th>
-<th>Status</th>
-</tr>
-</thead>
-
-<tbody id="resultsTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<!-- SCRIPT -->
 <script>
-
+const API_URL = "http://localhost:5001/api";
 const token = localStorage.getItem("token");
+let studentData = null;
 
 if (!token) {
     alert("Session expired. Please login again.");
     window.location.href = "studentlogin.html";
 }
 
-// =========================
-// FETCH PROFILE VIA JWT
-// =========================
-fetch("http://localhost:5001/api/student/profile", {
-    method: "GET",
-    headers: {
-        "Authorization": `Bearer ${token}`
+function logout() {
+    localStorage.clear();
+    window.location.href = "studentlogin.html";
+}
+
+function getGrade(percentage) {
+    if (percentage >= 90) return 'A+';
+    if (percentage >= 80) return 'A';
+    if (percentage >= 70) return 'B+';
+    if (percentage >= 60) return 'B';
+    if (percentage >= 50) return 'C';
+    if (percentage >= 40) return 'D';
+    return 'F';
+}
+
+// Load Student Profile and Stats
+async function loadStudentProfile() {
+    try {
+        const response = await fetch(`${API_URL}/student/profile`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error("Failed to load profile");
+        
+        studentData = await response.json();
+        
+        document.getElementById("studentName").innerText = studentData.name || "Student";
+        document.getElementById("studentCourse").innerText = studentData.course || "N/A";
+        
+        // Calculate subjects count from enrolledSubjects
+        const subjectsCount = studentData.enrolledSubjects?.length || 0;
+        document.getElementById("subjects").innerText = subjectsCount;
+        
+        // Load CGPA from marks
+        await loadCGPA();
+        
+        // Load attendance stats
+        await loadAttendanceStats();
+        
+        // Load pending assignments
+        await loadPendingAssignments();
+        
+        // Load announcements
+        await loadAnnouncements();
+        
+        // Load recent marks
+        await loadRecentMarks();
+        
+    } catch (err) {
+        console.error("Profile error:", err);
+        document.getElementById("studentName").innerText = "Error loading";
     }
-})
-.then(res => {
-    if (!res.ok) throw new Error("API Error");
-    return res.json();
-})
-.then(student => {
+}
 
-    console.log("Student Data:", student);
+// Load CGPA from marks
+async function loadCGPA() {
+    try {
+        const response = await fetch(`${API_URL}/student/marks`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        const marks = data.marks || [];
+        
+        // Filter MTT and ETT marks
+        const validMarks = marks.filter(m => m.examType === "MTT" || m.examType === "ETT");
+        
+        // Group by subject
+        const subjects = {};
+        validMarks.forEach(m => {
+            if (!subjects[m.subject]) subjects[m.subject] = {};
+            subjects[m.subject][m.examType] = m.marksObtained;
+        });
+        
+        let totalPercentage = 0;
+        let subjectCount = 0;
+        
+        for (const [subject, scores] of Object.entries(subjects)) {
+            if (scores.MTT && scores.ETT) {
+                const total = scores.MTT + scores.ETT;
+                const percentage = (total / 80) * 100;
+                totalPercentage += percentage;
+                subjectCount++;
+            }
+        }
+        
+        const avgPercentage = subjectCount > 0 ? totalPercentage / subjectCount : 0;
+        const cgpa = (avgPercentage / 9.5).toFixed(2);
+        
+        document.getElementById("cgpa").innerText = cgpa;
+        
+    } catch (err) {
+        console.error("CGPA error:", err);
+        document.getElementById("cgpa").innerText = "N/A";
+    }
+}
 
-    // TOP BAR
-    document.getElementById("studentName").innerText = student.name || "N/A";
-    document.getElementById("studentCourse").innerText = student.course || "N/A";
+// Load Attendance Statistics
+async function loadAttendanceStats() {
+    try {
+        const response = await fetch(`${API_URL}/student/attendance`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        const attendance = data.attendance || [];
+        
+        const total = attendance.length;
+        const present = attendance.filter(a => a.status === "Present").length;
+        const percentage = total > 0 ? ((present / total) * 100).toFixed(2) : 0;
+        
+        document.getElementById("attendance").innerText = percentage + "%";
+        
+    } catch (err) {
+        console.error("Attendance error:", err);
+        document.getElementById("attendance").innerText = "0%";
+    }
+}
 
-    // SAFE DATA
-    const attendance = Array.isArray(student.attendance)
-        ? student.attendance
-        : [];
+// Load Pending Assignments
+async function loadPendingAssignments() {
+    try {
+        const response = await fetch(`${API_URL}/student/assignments`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        const assignments = data.assignments || [];
+        
+        const pending = assignments.filter(a => a.status !== "Submitted");
+        
+        document.getElementById("assignments").innerText = pending.length;
+        
+        const container = document.getElementById("pendingAssignmentsList");
+        
+        if (pending.length === 0) {
+            container.innerHTML = '<div class="alert alert-success mb-0">All assignments completed! Great job!</div>';
+            return;
+        }
+        
+        container.innerHTML = pending.map(assignment => `
+            <div class="alert alert-warning mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>📝 ${assignment.title}</strong><br>
+                        <small>Subject: ${assignment.subject} | Due: ${new Date(assignment.dueDate).toLocaleDateString()}</small>
+                    </div>
+                    <a href="assignments.html" class="btn btn-sm btn-primary">Submit</a>
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (err) {
+        console.error("Assignments error:", err);
+        document.getElementById("pendingAssignmentsList").innerHTML = '<div class="alert alert-danger mb-0">Failed to load assignments</div>';
+    }
+}
 
-    const assignments = Array.isArray(student.assignments)
-        ? student.assignments
-        : [];
+// Load Announcements
+async function loadAnnouncements() {
+    try {
+        const response = await fetch(`${API_URL}/student/announcements`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const data = await response.json();
+        const announcements = data.announcements || [];
+        const container = document.getElementById("announcementsContainer");
+        
+        if (announcements.length === 0) {
+            container.innerHTML = '<div class="alert alert-info mb-0">No announcements yet</div>';
+            return;
+        }
+        
+        container.innerHTML = announcements.slice(0, 5).map(ann => `
+            <div class="alert ${ann.isImportant ? 'alert-danger' : 'alert-info'} mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>📢 ${ann.title}</strong>
+                    ${ann.isImportant ? '<span class="badge bg-danger">Important</span>' : ''}
+                </div>
+                <small class="text-muted">Posted by: ${ann.teacherName} | ${new Date(ann.createdAt).toLocaleDateString()}</small>
+                <p class="mb-0 mt-2">${ann.content}</p>
+            </div>
+        `).join('');
+        
+    } catch (err) {
+        console.error("Announcements error:", err);
+        document.getElementById("announcementsContainer").innerHTML = '<div class="alert alert-danger mb-0">Failed to load announcements</div>';
+    }
+}
 
-    const marks = Array.isArray(student.marks)
-        ? student.marks
-        : [];
-
-    // =========================
-    // ATTENDANCE % FIX
-    // =========================
-    const total = attendance.length;
-
-    const present = attendance.filter(
-        a => a.status === "Present"
-    ).length;
-
-    const percentage =
-        total > 0 ? ((present / total) * 100).toFixed(2) : 0;
-
-    document.getElementById("attendance").innerText =
-        percentage + "%";
-
-    // OTHER CARDS
-    document.getElementById("assignments").innerText = assignments.length;
-    document.getElementById("cgpa").innerText = student.cgpa ?? "N/A";
-
-    document.getElementById("subjects").innerText =
-        [...new Set(attendance.map(a => a.subject))].length;
-
-    // TABLE
-    const table = document.getElementById("resultsTable");
-    table.innerHTML = "";
-
-    if (marks.length > 0) {
-        marks.forEach(m => {
-            table.innerHTML += `
+// Load Recent Marks
+async function loadRecentMarks() {
+    try {
+        const response = await fetch(`${API_URL}/student/marks`, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        const marks = data.marks || [];
+        
+        // Filter MTT and ETT marks
+        const validMarks = marks.filter(m => m.examType === "MTT" || m.examType === "ETT");
+        
+        // Get recent marks
+        const recentMarks = validMarks.slice(-6).reverse();
+        
+        const tableBody = document.getElementById("marksTable");
+        
+        if (recentMarks.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No marks available</td</tbody>';
+            return;
+        }
+        
+        tableBody.innerHTML = recentMarks.map(mark => {
+            const percentage = (mark.marksObtained / mark.maxMarks) * 100;
+            const grade = getGrade(percentage);
+            let gradeClass = '';
+            if (grade === 'A+') gradeClass = 'text-success';
+            else if (grade === 'A') gradeClass = 'text-success';
+            else if (grade === 'B+') gradeClass = 'text-info';
+            else if (grade === 'B') gradeClass = 'text-info';
+            else if (grade === 'C') gradeClass = 'text-warning';
+            else gradeClass = 'text-danger';
+            
+            return `
                 <tr>
-                    <td>${m.subject || "-"}</td>
-                    <td>${m.marks ?? "-"}</td>
-                    <td>${m.marks >= 40 ? "Pass" : "Fail"}</td>
+                    <td><strong>${mark.subject}</strong></td>
+                    <td>${mark.examType}</td>
+                    <td>${mark.marksObtained}</td>
+                    <td>${mark.maxMarks}</td>
+                    <td>${percentage.toFixed(2)}%</td</td
+                    <td class="${gradeClass} fw-bold">${grade}</td</td
                 </tr>
             `;
-        });
-    } else {
-        table.innerHTML = `<tr><td colspan="3">No marks available</td></tr>`;
+        }).join('');
+        
+    } catch (err) {
+        console.error("Marks error:", err);
+        document.getElementById("marksTable").innerHTML = '<tr><td colspan="6" class="text-center">Failed to load marks</td</tbody>';
     }
+}
 
-})
-.catch(err => {
-    console.error("Dashboard error:", err);
-    alert("Failed to load student data");
-});
-
-// =========================
-// SIDEBAR LINKS (NO studentId)
-// =========================
-document.querySelectorAll(".sidebar a").forEach(link => {
-
-    const href = link.getAttribute("href");
-
-    if (
-        href &&
-        !href.includes("studentlogin.html") &&
-        !href.includes("http")
-    ) {
-        link.setAttribute("href", href);
-    }
-});
-
+// Initialize dashboard
+loadStudentProfile();
 </script>
 
 </body>

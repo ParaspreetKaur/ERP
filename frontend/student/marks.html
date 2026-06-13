@@ -1,105 +1,273 @@
 <!DOCTYPE html>
-
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
-
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Marks</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #f4f7fc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background: linear-gradient(180deg, #0d6efd, #0a58ca);
+      padding: 25px 20px;
+      color: white;
+      z-index: 100;
+    }
+    .sidebar h3 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 15px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      transition: 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: rgba(255,255,255,0.2);
+    }
+    .content {
+      margin-left: 260px;
+      padding: 25px 30px;
+      min-height: 100vh;
+    }
+    .header-card {
+      background: white;
+      padding: 20px 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .marks-table {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .marks-table th {
+      background: #1a1a2e;
+      color: white;
+      padding: 14px 12px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .marks-table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .grade-Aplus { background: #28a745; color: white; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .grade-A { background: #34ce57; color: white; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .grade-Bplus { background: #17a2b8; color: white; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .grade-B { background: #5bc0de; color: white; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .grade-C { background: #ffc107; color: #000; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .grade-D { background: #fd7e14; color: white; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .grade-F { background: #dc3545; color: white; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+    .summary-row {
+      background: #e8f0fe;
+      font-weight: bold;
+    }
+    .summary-row td {
+      border-top: 2px solid #0d6efd;
+    }
+    .refresh-btn {
+      background: #0d6efd;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      color: white;
+    }
+    .refresh-btn:hover {
+      background: #0a58ca;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container py-5">
+<div class="sidebar">
+  <h3><i class="bi bi-mortarboard-fill"></i> Student</h3>
+  <a href="student.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a href="profile.html"><i class="bi bi-person-circle"></i> Profile</a>
+  <a href="attendance.html"><i class="bi bi-calendar-check"></i> Attendance</a>
+  <a href="marks.html" class="active"><i class="bi bi-bar-chart-fill"></i> Marks</a>
+  <a href="assignments.html"><i class="bi bi-journal-text"></i> Assignments</a>
+  <a href="#" onclick="logout(); return false;"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
 
-  <div class="card shadow border-0 rounded-4 p-4">
-
-    <h2 class="mb-4 text-success">
-      Student Marks
-    </h2>
-
-    <table class="table table-hover table-bordered">
-
-      <thead class="table-success">
-
-        <tr>
-          <th>Subject</th>
-          <th>Marks</th>
-          <th>Status</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        <tr>
-          <td>Math</td>
-          <td>80</td>
-          <td>Pass</td>
-        </tr>
-
-        <tr>
-          <td>Physics</td>
-          <td>75</td>
-          <td>Pass</td>
-        </tr>
-
-        <tr>
-          <td>Computer</td>
-          <td>88</td>
-          <td>Pass</td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-    <div class="alert alert-primary mt-4">
-      Current CGPA:
-      <strong id="cgpa"></strong>
+<div class="content">
+  <div class="header-card">
+    <div>
+      <h4 class="mb-0"><i class="bi bi-bar-chart-fill"></i> My Academic Marks</h4>
+      <small class="text-muted">Subject-wise marks and overall CGPA</small>
     </div>
-
-    <a href="student.html" class="btn btn-success">
-      Back to Dashboard
-    </a>
-
+    <button class="refresh-btn" onclick="loadMarks()">
+      <i class="bi bi-arrow-repeat"></i> Refresh
+    </button>
   </div>
 
+  <div id="alertMsg"></div>
+
+  <div class="marks-table">
+    <table class="table table-bordered mb-0">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>MTT (0-30)</th>
+          <th>ETT (0-50)</th>
+          <th>Total (0-80)</th>
+          <th>Percentage</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody id="marksBody">
+        <tr><td colspan="6" class="text-center py-4">Loading marks...</td</tbody>
+      <tfoot id="marksFoot" style="display: none;">
+        <tr class="summary-row">
+          <td colspan="3"><strong>Overall Summary</strong></td>
+          <td id="overallTotal" class="text-center"><strong>0/0</strong></td>
+          <td id="overallPercent" class="text-center"><strong>0%</strong></td>
+          <td id="overallGrade" class="text-center"><strong>-</strong></td>
+        </tr>
+        <tr class="summary-row">
+          <td colspan="5"><strong>CGPA (out of 10)</strong></td>
+          <td id="cgpaValue" class="text-center"><strong>0.00</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 
 <script>
-
+const API_URL = "http://localhost:5001/api";
 const token = localStorage.getItem("token");
 
 if (!token) {
+  alert("Please login first");
   window.location.href = "studentlogin.html";
 }
 
-async function loadMarks() {
+function logout() {
+  localStorage.clear();
+  window.location.href = "studentlogin.html";
+}
 
-  const res = await fetch(
-    "http://localhost:5001/api/student/profile",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
+function getGrade(percentage) {
+  if (percentage >= 90) return { grade: 'A+', class: 'grade-Aplus' };
+  if (percentage >= 80) return { grade: 'A', class: 'grade-A' };
+  if (percentage >= 70) return { grade: 'B+', class: 'grade-Bplus' };
+  if (percentage >= 60) return { grade: 'B', class: 'grade-B' };
+  if (percentage >= 50) return { grade: 'C', class: 'grade-C' };
+  if (percentage >= 40) return { grade: 'D', class: 'grade-D' };
+  return { grade: 'F', class: 'grade-F' };
+}
+
+async function loadMarks() {
+  try {
+    document.getElementById("marksBody").innerHTML = '<tr><td colspan="6" class="text-center py-4">Loading...</td></tr>';
+    document.getElementById("marksFoot").style.display = "none";
+    
+    const response = await fetch(`${API_URL}/student/marks`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) throw new Error(data.message);
+    
+    const marks = data.marks || [];
+    const validMarks = marks.filter(m => m.examType === "MTT" || m.examType === "ETT");
+    
+    if (validMarks.length === 0) {
+      document.getElementById("marksBody").innerHTML = '<tr><td colspan="6" class="text-center py-4">No marks available</td></tr>';
+      return;
+    }
+    
+    // Group by subject
+    const subjects = {};
+    validMarks.forEach(m => {
+      if (!subjects[m.subject]) subjects[m.subject] = { MTT: null, ETT: null };
+      subjects[m.subject][m.examType] = m.marksObtained;
+    });
+    
+    let html = '';
+    let totalMarksSum = 0;
+    let totalPercentageSum = 0;
+    let subjectCount = 0;
+    
+    for (const subject in subjects) {
+      const mtt = subjects[subject].MTT;
+      const ett = subjects[subject].ETT;
+      
+      if (mtt !== null && ett !== null) {
+        const total = mtt + ett;
+        const percentage = ((total / 80) * 100).toFixed(2);
+        const gradeInfo = getGrade(parseFloat(percentage));
+        
+        totalMarksSum += total;
+        totalPercentageSum += parseFloat(percentage);
+        subjectCount++;
+        
+        html += `
+          <tr>
+            <td><strong>${subject}</strong></td>
+            <td>${mtt}/30</td>
+            <td>${ett}/50</td>
+            <td>${total}/80</td>
+            <td>${percentage}%</td>
+            <td><span class="${gradeInfo.class}">${gradeInfo.grade}</span></td>
+          </tr>
+        `;
       }
     }
-  );
-
-  if (!res.ok) {
-    alert("Session expired. Please login again.");
-    window.location.href = "studentlogin.html";
-    return;
+    
+    if (html === '') {
+      document.getElementById("marksBody").innerHTML = '<tr><td colspan="6" class="text-center py-4">No complete marks available</td></tr>';
+      return;
+    }
+    
+    const maxPossibleTotal = subjectCount * 80;
+    const overallTotal = totalMarksSum;
+    const overallPercentage = subjectCount > 0 ? (totalPercentageSum / subjectCount).toFixed(2) : 0;
+    const overallGradeInfo = getGrade(parseFloat(overallPercentage));
+    const cgpa = (parseFloat(overallPercentage) / 9.5).toFixed(2);
+    
+    document.getElementById("marksBody").innerHTML = html;
+    document.getElementById("marksFoot").style.display = "table-footer-group";
+    document.getElementById("overallTotal").innerHTML = overallTotal + '/' + maxPossibleTotal;
+    document.getElementById("overallPercent").innerHTML = overallPercentage + '%';
+    document.getElementById("overallGrade").innerHTML = '<span class="' + overallGradeInfo.class + '">' + overallGradeInfo.grade + '</span>';
+    document.getElementById("cgpaValue").innerHTML = cgpa;
+    
+  } catch (err) {
+    console.error(err);
+    document.getElementById("marksBody").innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4">Error: ' + err.message + '</td></tr>';
   }
-
-  const student = await res.json();
-
-  document.getElementById("cgpa").innerText =
-    student.cgpa;
-
 }
 
 loadMarks();
-
 </script>
-
 </body>
 </html>

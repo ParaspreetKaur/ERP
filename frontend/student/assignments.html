@@ -1,116 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <title>Student Assignments</title>
-
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Assignments</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #f4f7fc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100vh;
+      background: linear-gradient(180deg, #0d6efd, #0a58ca);
+      padding: 25px 20px;
+      color: white;
+      z-index: 100;
+    }
+    .sidebar h3 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      text-decoration: none;
+      padding: 12px 15px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      transition: 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: rgba(255,255,255,0.2);
+    }
+    .content {
+      margin-left: 260px;
+      padding: 25px 30px;
+      min-height: 100vh;
+    }
+    .header-card {
+      background: white;
+      padding: 20px 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .assignment-card {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border-left: 4px solid;
+    }
+    .assignment-card.pending { border-left-color: #ffc107; }
+    .assignment-card.submitted { border-left-color: #28a745; }
+    .assignment-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .assignment-details {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .assignment-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .badge-pending { background: #ffc107; color: #000; padding: 4px 12px; border-radius: 20px; }
+    .badge-submitted { background: #28a745; color: white; padding: 4px 12px; border-radius: 20px; }
+    .badge-graded { background: #17a2b8; color: white; padding: 4px 12px; border-radius: 20px; }
+    .upload-btn {
+      background: #0d6efd;
+      border: none;
+      padding: 5px 15px;
+      border-radius: 6px;
+      color: white;
+    }
+    .upload-btn:hover { background: #0a58ca; }
+    .file-input { font-size: 12px; }
+    .refresh-btn {
+      background: #0d6efd;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      color: white;
+    }
+    .refresh-btn:hover { background: #0a58ca; }
+  </style>
 </head>
+<body>
 
-<body class="bg-light">
+<div class="sidebar">
+  <h3><i class="bi bi-mortarboard-fill"></i> Student</h3>
+  <a href="student.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a href="profile.html"><i class="bi bi-person-circle"></i> Profile</a>
+  <a href="attendance.html"><i class="bi bi-calendar-check"></i> Attendance</a>
+  <a href="marks.html"><i class="bi bi-bar-chart-fill"></i> Marks</a>
+  <a href="assignments.html" class="active"><i class="bi bi-journal-text"></i> Assignments</a>
+  <a href="#" onclick="logout(); return false;"><i class="bi bi-box-arrow-right"></i> Logout</a>
+</div>
 
-<div class="container py-5">
-
-  <div class="card shadow border-0 rounded-4 p-4">
-
-    <h2 class="mb-4 text-primary">
-      Student Assignments
-    </h2>
-
-    <table class="table table-hover table-bordered">
-
-      <thead class="table-primary">
-        <tr>
-          <th>Assignment</th>
-          <th>Subject</th>
-          <th>Due Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody id="assignmentTable">
-
-      </tbody>
-
-    </table>
-
-    <div class="alert alert-info mt-4">
-      Student ID:
-      <strong id="studentId"></strong>
+<div class="content">
+  <div class="header-card">
+    <div>
+      <h4 class="mb-0"><i class="bi bi-journal-text"></i> My Assignments</h4>
+      <small class="text-muted">View and submit your assignments</small>
     </div>
-
-    <a href="student.html" class="btn btn-primary">
-      Back to Dashboard
-    </a>
-
+    <button class="refresh-btn" onclick="loadAssignments()">
+      <i class="bi bi-arrow-repeat"></i> Refresh
+    </button>
   </div>
 
+  <div id="alertMsg"></div>
+  <div id="assignmentsList">Loading assignments...</div>
 </div>
 
 <script>
-
+const API_URL = "http://localhost:5001/api";
 const token = localStorage.getItem("token");
 
 if (!token) {
+  alert("Please login first");
+  window.location.href = "../studentlogin.html";
+}
+
+function showAlert(message, type) {
+  const alertDiv = document.getElementById('alertMsg');
+  alertDiv.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show">${message}</div>`;
+  setTimeout(() => alertDiv.innerHTML = '', 3000);
+}
+
+function logout() {
+  localStorage.clear();
   window.location.href = "studentlogin.html";
 }
 
 async function loadAssignments() {
-
-  const res = await fetch(
-    "http://localhost:5001/api/student/profile",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  try {
+    document.getElementById("assignmentsList").innerHTML = '<div class="text-center py-4">Loading assignments...</div>';
+    
+    const response = await fetch(`${API_URL}/student/assignments`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    
+    const data = await response.json();
+    const assignments = data.assignments || [];
+    
+    if (assignments.length === 0) {
+      document.getElementById("assignmentsList").innerHTML = '<div class="alert alert-info">No assignments available</div>';
+      return;
     }
-  );
+    
+    let html = '';
+    
+    assignments.forEach(assignment => {
+      const isSubmitted = assignment.status === "Submitted";
+      const isGraded = assignment.marks !== undefined && assignment.marks !== null;
+      const dueDate = new Date(assignment.dueDate);
+      const isOverdue = dueDate < new Date() && !isSubmitted;
+      
+      let statusClass = 'pending';
+      let statusText = 'Pending';
+      
+      if (isSubmitted && isGraded) {
+        statusClass = 'submitted';
+        statusText = `Graded: ${assignment.marks}/${assignment.maxMarks}`;
+      } else if (isSubmitted) {
+        statusClass = 'submitted';
+        statusText = 'Submitted - Waiting for Grade';
+      } else if (isOverdue) {
+        statusClass = 'pending';
+        statusText = 'Overdue';
+      }
+      
+      html += `
+        <div class="assignment-card ${statusClass}">
+          <div class="assignment-title">${assignment.title}</div>
+          <div class="assignment-details">
+            <strong>Subject:</strong> ${assignment.subject}<br>
+            <strong>Description:</strong> ${assignment.description || 'No description'}<br>
+            <strong>Due Date:</strong> ${dueDate.toLocaleDateString()}
+          </div>
+          <div class="assignment-meta">
+            <span class="badge-${statusClass === 'submitted' ? 'submitted' : 'pending'}">${statusText}</span>
+      `;
+      
+      if (!isSubmitted) {
+        html += `
+            <form onsubmit="submitAssignment(event, '${assignment._id}')" enctype="multipart/form-data">
+              <input type="file" name="file" id="file-${assignment._id}" class="form-control file-input d-inline-block w-auto" accept=".pdf,.doc,.docx,.txt,.jpg,.png" required>
+              <button type="submit" class="upload-btn"><i class="bi bi-upload"></i> Submit</button>
+            </form>
+        `;
+      } else if (isGraded) {
+        html += `<div class="text-success"><strong>Grade:</strong> ${assignment.marks}/${assignment.maxMarks} | <strong>Feedback:</strong> ${assignment.feedback || 'No feedback'}</div>`;
+      }
+      
+      html += `</div></div>`;
+    });
+    
+    document.getElementById("assignmentsList").innerHTML = html;
+    
+  } catch (err) {
+    console.error(err);
+    document.getElementById("assignmentsList").innerHTML = `<div class="alert alert-danger">Error loading assignments: ${err.message}</div>`;
+  }
+}
 
-  const student = await res.json();
-
-  if (!student || student.message) {
-    alert("Session expired. Please login again.");
-    window.location.href = "studentlogin.html";
+async function submitAssignment(event, assignmentId) {
+  event.preventDefault();
+  
+  const fileInput = document.getElementById(`file-${assignmentId}`);
+  const file = fileInput.files[0];
+  
+  if (!file) {
+    showAlert("Please select a file to upload", "warning");
     return;
   }
-
-  document.getElementById("studentId").innerText =
-    student.studentId;
-
-  const table =
-    document.getElementById("assignmentTable");
-
-  student.assignments.forEach(assign => {
-
-    table.innerHTML += `
-      <tr>
-        <td>${assign.title}</td>
-        <td>${assign.subject}</td>
-        <td>${assign.dueDate}</td>
-        <td>
-          <span class="badge ${
-            assign.status === "Submitted"
-              ? "bg-success"
-              : "bg-warning text-dark"
-          }">
-            ${assign.status}
-          </span>
-        </td>
-      </tr>
-    `;
-
-  });
-
+  
+  if (file.size > 5 * 1024 * 1024) {
+    showAlert("File size must be less than 5MB", "danger");
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("assignmentId", assignmentId);
+  
+  try {
+    const response = await fetch(`${API_URL}/student/submit-assignment`, {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token },
+      body: formData
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      showAlert("Assignment submitted successfully!", "success");
+      loadAssignments();
+    } else {
+      showAlert(data.message || "Submission failed", "danger");
+    }
+  } catch (err) {
+    showAlert("Error: " + err.message, "danger");
+  }
 }
 
 loadAssignments();
-
 </script>
-
 </body>
 </html>

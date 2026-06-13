@@ -1,36 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard</title>
 
-    <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-    <title>Teacher Portal</title>
+body{
+  font-family:Arial,sans-serif;
+  background:#f4f7fc;
+}
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+/* SIDEBAR */
+.sidebar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:250px;
+  height:100vh;
+  background:linear-gradient(180deg,#5b2be0,#3d0db8);
+  padding:30px 20px;
+  color:white;
+}
 
-    <link rel="stylesheet" href="style.css">
+.sidebar h2{
+  text-align:center;
+  margin-bottom:40px;
+  font-weight:bold;
+}
 
+.sidebar a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:white;
+  text-decoration:none;
+  padding:12px 15px;
+  border-radius:12px;
+  margin-bottom:12px;
+  transition:0.3s;
+}
+
+.sidebar a:hover{
+  background:rgba(255,255,255,0.2);
+}
+
+/* MAIN CONTENT */
+.content{
+  margin-left:250px;
+  padding:30px;
+}
+
+/* TOPBAR */
+.topbar{
+  background:white;
+  padding:15px 25px;
+  border-radius:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  margin-bottom:30px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.topbar-right img{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #5b2be0;
+}
+
+/* CARDS */
+.card-box{
+  padding:25px;
+  border-radius:20px;
+  color:white;
+  margin-bottom:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.card1{
+  background:linear-gradient(135deg,#667eea,#764ba2);
+}
+
+.card2{
+  background:linear-gradient(135deg,#f7971e,#ffd200);
+}
+
+.card3{
+  background:linear-gradient(135deg,#11998e,#38ef7d);
+}
+
+.card4{
+  background:linear-gradient(135deg,#fc466b,#3f5efb);
+}
+
+.card-box h2{
+  font-size:32px;
+  font-weight:bold;
+}
+
+/* INFO CARDS */
+.info-card,
+.table-box{
+  background:white;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.page-title{
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+/* Announcement Card */
+.announcement-card {
+  background: #f8f9fa;
+  border-left: 4px solid #5b2be0;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.announcement-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.announcement-card.important {
+  border-left-color: #dc3545;
+  background: #fff9f9;
+}
+
+.announcement-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.announcement-meta {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.announcement-content {
+  font-size: 14px;
+  color: #333;
+}
+
+.badge-important {
+  background: #dc3545;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+}
+
+.btn-create {
+  background: #5b2be0;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.btn-create:hover {
+  background: #3d0db8;
+}
+
+.announcement-empty {
+  text-align: center;
+  padding: 30px;
+  color: #888;
+}
+</style>
 </head>
-
 <body>
 
-    <div class="d-flex justify-content-center align-items-center vh-100">
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2><i class="bi bi-person-workspace"></i> Teacher</h2>
+  <a href="teacher.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a href="teacherprofile.html"><i class="bi bi-person-circle"></i> Profile</a>
+  <a href="attendance.html"><i class="bi bi-calendar-check"></i> Attendance Sheet</a>
+  <a href="assignments.html"><i class="bi bi-journal-text"></i> Assignments</a>
+  <a href="marks.html"><i class="bi bi-bar-chart-fill"></i> Marks</a>
+  <a href="duetasks.html"><i class="bi bi-list-check"></i> Due Tasks</a>
+  <a href="announcements.html"><i class="bi bi-megaphone"></i> Announcements</a>
+  <a href="#" onclick="logout(); return false;">
+  <i class="bi bi-box-arrow-right"></i> Logout
+</a>
+</div>
 
-        <div class="text-center">
+<!-- CONTENT -->
+<div class="content">
 
-            <h1>
-                Teacher Portal
-            </h1>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-right">
+      <img src="teacher-profile.jpg" alt="teacher" onerror="this.src='https://via.placeholder.com/60'">
+      <div>
+        <h4 id="teacherName">Loading...</h4>
+        <p id="teacherBranch">Loading...</p>
+      </div>
+    </div>
+  </div>
 
-            <p class="mt-3">
-                Functionality Coming Soon...
-            </p>
+  <h1 class="page-title">Teacher Dashboard</h1>
 
-        </div>
+  <!-- DASHBOARD CARDS -->
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card-box card1">
+        <h5>Students Managed</h5>
+        <h2 id="studentsCount">0</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-box card2">
+        <h5>Attendance Pending</h5>
+        <h2 id="attendancePending">0</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-box card3">
+        <h5>Assignments</h5>
+        <h2 id="assignmentsCount">0</h2>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-box card4">
+        <h5>Pending Grading</h5>
+        <h2 id="gradingPending">0</h2>
+      </div>
+    </div>
+  </div>
 
+  <!-- DUE TASKS + ANNOUNCEMENTS -->
+  <div class="row mt-4">
+    <div class="col-md-5">
+      <div class="info-card">
+        <h3>Due Tasks</h3>
+        <ul class="mt-3" id="dueTasksList">
+          <li>Loading tasks...</li>
+        </ul>
+      </div>
     </div>
 
+    <div class="col-md-7">
+      <div class="info-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="mb-0">📢 Recent Announcements</h3>
+          <button class="btn-create" onclick="window.location.href='announcements.html'">
+            <i class="bi bi-plus-circle"></i> New
+          </button>
+        </div>
+        <div id="announcementsList">
+          <div class="announcement-empty">Loading announcements...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENT SUBMISSIONS -->
+  <div class="table-box mt-4">
+    <h3 class="mb-3"> Recent Submissions</h3>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-primary">
+          <tr>
+            <th>Student</th>
+            <th>Assignment</th>
+            <th>Subject</th>
+            <th>Submitted</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="recentSubmissions">
+          <tr><td colspan="5" class="text-center">Loading...</td</tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = "http://127.0.0.1:5001/api";
+const token = localStorage.getItem("token");
+const teacher = JSON.parse(localStorage.getItem("teacher"));
+
+if (!token || !teacher) {
+  alert("Please login first");
+  window.location.href = "login.html";
+}
+
+// SHOW TEACHER DATA
+document.getElementById("teacherName").innerText = teacher.name || "Teacher";
+document.getElementById("teacherBranch").innerText = teacher.branch || "N/A";
+
+// Load Dashboard Data
+async function loadDashboardData() {
+  try {
+    await Promise.all([
+      loadStudentsCount(),
+      loadSubmissionsData(),
+      loadAnnouncements(),
+      loadDueTasks()
+    ]);
+  } catch (err) {
+    console.error("Error loading dashboard:", err);
+  }
+}
+
+async function loadStudentsCount() {
+  try {
+    const response = await fetch(`${API_URL}/teacher/students/${teacher._id}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await response.json();
+    const studentsCount = data.students?.length || 0;
+    document.getElementById("studentsCount").innerText = studentsCount;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function loadSubmissionsData() {
+  try {
+    const response = await fetch(`${API_URL}/teacher/submissions/${teacher._id}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await response.json();
+    const submissions = data.submissions || [];
+    
+    const pendingGrading = submissions.filter(s => s.status !== "Graded").length;
+    document.getElementById("gradingPending").innerText = pendingGrading;
+    document.getElementById("assignmentsCount").innerText = submissions.length;
+    
+    // Show recent 5 submissions
+    const recent = submissions.slice(0, 5);
+    const tbody = document.getElementById("recentSubmissions");
+    
+    if (recent.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center">No submissions yet</td</tbody>';
+    } else {
+      tbody.innerHTML = recent.map(sub => `
+        <tr>
+          <td>${sub.studentName || sub.studentId}</td</td
+          <td>${sub.title || '-'}</td</td
+          <td>${sub.subject || '-'}</td</td
+          <td>${new Date(sub.submittedAt).toLocaleDateString()}</td</td
+          <td><span class="badge ${sub.status === 'Graded' ? 'bg-success' : 'bg-warning'}">${sub.status || 'Pending'}</span></td</td
+        </tr>
+      `).join('');
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function loadAnnouncements() {
+  try {
+    const response = await fetch(`${API_URL}/teacher/announcements/teacher`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await response.json();
+    const announcements = (data.announcements || []).slice(0, 3);
+    
+    const container = document.getElementById("announcementsList");
+    
+    if (announcements.length === 0) {
+      container.innerHTML = '<div class="announcement-empty">No announcements yet. Click "New" to create one.</div>';
+      return;
+    }
+    
+    container.innerHTML = announcements.map(ann => `
+      <div class="announcement-card ${ann.isImportant ? 'important' : ''}">
+        <div class="announcement-title">
+          <span>${ann.isImportant ? '' : ''}${ann.title}</span>
+          ${ann.isImportant ? '<span class="badge-important">Important</span>' : ''}
+        </div>
+        <div class="announcement-meta">
+          By: ${ann.teacherName} | ${new Date(ann.createdAt).toLocaleDateString()}
+        </div>
+        <div class="announcement-content">${ann.content.substring(0, 100)}${ann.content.length > 100 ? '...' : ''}</div>
+      </div>
+    `).join('');
+    
+  } catch (err) {
+    console.error(err);
+    document.getElementById("announcementsList").innerHTML = '<div class="announcement-empty">Error loading announcements</div>';
+  }
+}
+
+async function loadDueTasks() {
+  try {
+    // Get pending attendance
+    const attendanceRes = await fetch(`${API_URL}/teacher/attendance/students/${teacher._id}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const attendanceData = await attendanceRes.json();
+    const students = attendanceData.students || [];
+    
+    let pendingAttendance = 0;
+    students.forEach(student => {
+      if (student.subjects) {
+        student.subjects.forEach(subject => {
+          const isMarked = student.attendanceStatus && student.attendanceStatus[subject.subjectName];
+          if (!isMarked) pendingAttendance++;
+        });
+      }
+    });
+    document.getElementById("attendancePending").innerText = pendingAttendance;
+    
+    // Get pending grading
+    const submissionsRes = await fetch(`${API_URL}/teacher/submissions/${teacher._id}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const submissionsData = await submissionsRes.json();
+    const submissions = submissionsData.submissions || [];
+    const pendingGrading = submissions.filter(s => s.status !== "Graded").length;
+    
+    const dueTasksList = document.getElementById("dueTasksList");
+    const tasks = [];
+    
+    if (pendingAttendance > 0) tasks.push(` Mark attendance for ${pendingAttendance} student(s)`);
+    if (pendingGrading > 0) tasks.push(`Grade ${pendingGrading} pending assignment(s)`);
+    
+    if (tasks.length === 0) {
+      dueTasksList.innerHTML = '<li class="text-success"> All tasks completed!</li>';
+    } else {
+      dueTasksList.innerHTML = tasks.map(task => `<li>${task}</li>`).join('');
+    }
+    
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+// Load all data
+loadDashboardData();
+</script>
 </body>
 </html>

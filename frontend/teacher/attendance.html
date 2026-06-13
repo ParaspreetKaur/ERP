@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance Sheet</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<style>
+  body {
+    background: #f4f7fc;
+    font-family: Arial, sans-serif;
+  }
+  .sidebar {
+    position: fixed;
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(180deg, #5b2be0, #3d0db8);
+    padding: 30px 20px;
+    color: white;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    background: rgba(255,255,255,0.2);
+  }
+  .content {
+    margin-left: 250px;
+    padding: 30px;
+  }
+  .table-box {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  }
+  .present-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    margin: 0 3px;
+    font-size: 13px;
+  }
+  .absent-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    margin: 0 3px;
+    font-size: 13px;
+  }
+  .present-btn:disabled, .absent-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .badge-present {
+    background: #d4edda;
+    color: #155724;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+  }
+  .badge-absent {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+  }
+  .badge-pending {
+    background: #fff3cd;
+    color: #856404;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    background: #5b2be0;
+    color: white;
+    padding: 10px 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #e9ecef;
+  }
+  .text-start {
+    text-align: left;
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h3><i class="bi bi-megaphone"></i> <span>Teacher</span></h3>
+  <a href="teacher.html"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+  <a href="teacherprofile.html"><i class="bi bi-person-circle"></i> <span>Profile</span></a>
+  <a href="attendance.html"><i class="bi bi-calendar-check"></i> <span>Attendance</span></a>
+  <a href="assignments.html"><i class="bi bi-journal-text"></i> <span>Assignments</span></a>
+  <a href="marks.html"><i class="bi bi-bar-chart-fill"></i> <span>Marksheet</span></a>
+  <a href="announcements.html" class="active"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+  <a href="duetasks.html"><i class="bi bi-list-check"></i> <span>Due Tasks</span></a>
+  <a href="#" onclick="logout(); return false;">
+  <i class="bi bi-box-arrow-right"></i> Logout
+</a>
+</div>
+
+<div class="content">
+  <h1 class="mb-4">📋 Attendance Sheet</h1>
+  
+  <div id="alertMsg"></div>
+  
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="fw-bold">Select Subject</label>
+      <select id="subjectSelect" class="form-select mt-1">
+        <option value="">-- Select Subject --</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="fw-bold">Today's Date</label>
+      <input type="text" id="todayDate" class="form-control mt-1" readonly>
+    </div>
+    <div class="col-md-4 text-end">
+      <button class="btn btn-primary mt-4" onclick="loadStudents()">
+        <i class="bi bi-arrow-repeat"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <div class="table-box">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th width="5%">#</th>
+          <th width="20%">Student ID</th>
+          <th width="30%">Student Name</th>
+          <th width="20%">Status</th>
+          <th width="25%">Action</th>
+        </tr>
+      </thead>
+      <tbody id="studentTable">
+        <tr>
+          <td colspan="5" class="text-center py-4">Select a subject to view students</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const API_URL = "http://127.0.0.1:5001/api";
+const token = localStorage.getItem("token");
+const teacher = JSON.parse(localStorage.getItem("teacher"));
+
+if (!token || !teacher) {
+  alert("Please login first");
+  window.location.href = "login.html";
+}
+
+document.getElementById("todayDate").value = new Date().toISOString().split('T')[0];
+
+function showAlert(message, type) {
+  const alertDiv = document.getElementById('alertMsg');
+  alertDiv.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show">${message}</div>`;
+  setTimeout(() => alertDiv.innerHTML = '', 3000);
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+
+const subjectSelect = document.getElementById("subjectSelect");
+if (teacher.subjects && teacher.subjects.length > 0) {
+  teacher.subjects.forEach(subject => {
+    subjectSelect.innerHTML += `<option value="${subject}">${subject}</option>`;
+  });
+}
+
+subjectSelect.addEventListener("change", () => {
+  if (subjectSelect.value) {
+    loadStudents();
+  }
+});
+
+async function loadStudents() {
+  const subject = subjectSelect.value;
+  if (!subject) return;
+  
+  try {
+    const tbody = document.getElementById("studentTable");
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Loading...</td></tr>';
+    
+    const response = await fetch(`${API_URL}/teacher/attendance/students/${teacher._id}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) throw new Error(data.message);
+    
+    const students = data.students || [];
+    
+    const filteredStudents = students.filter(s => {
+      if (!s.subjects) return false;
+      return s.subjects.some(sub => sub.subjectName === subject);
+    });
+    
+    if (filteredStudents.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">No students found for ${subject}</td></tr>`;
+      return;
+    }
+    
+    let html = '';
+    
+    filteredStudents.forEach((student, index) => {
+      let isMarked = false;
+      let todayStatus = null;
+      
+      if (student.attendanceStatus) {
+        todayStatus = student.attendanceStatus[subject];
+        isMarked = todayStatus !== null && todayStatus !== undefined;
+      }
+      
+      let statusHtml = '';
+      if (isMarked) {
+        statusHtml = `<span class="badge-${todayStatus.toLowerCase()}">${todayStatus}</span>`;
+      } else {
+        statusHtml = `<span class="badge-pending">Pending</span>`;
+      }
+      
+      html += '<tr>';
+      html += '<td class="text-center">' + (index + 1) + '</td>';
+      html += '<td class="text-center">' + student.studentId + '</td>';
+      html += '<td class="text-start">' + student.name + '</td>';
+      html += '<td class="text-center">' + statusHtml + '</td>';
+      html += '<td class="text-center">';
+      html += '<button class="present-btn" onclick="markAttendance(\'' + student._id + '\', \'Present\')"' + (isMarked ? ' disabled' : '') + '>Present</button>';
+      html += '<button class="absent-btn" onclick="markAttendance(\'' + student._id + '\', \'Absent\')"' + (isMarked ? ' disabled' : '') + '>Absent</button>';
+      html += '</td>';
+      html += '</tr>';
+    });
+    
+    tbody.innerHTML = html;
+    
+  } catch (err) {
+    console.error(err);
+    document.getElementById("studentTable").innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Error: ${err.message}</td></tr>`;
+  }
+}
+
+async function markAttendance(studentId, status) {
+  const subject = subjectSelect.value;
+  
+  try {
+    const response = await fetch(`${API_URL}/teacher/attendance/${studentId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ subject, status })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      showAlert(`✓ ${data.message}`, "success");
+      loadStudents();
+    } else {
+      showAlert(data.message || "Failed to mark attendance", "danger");
+    }
+    
+  } catch (err) {
+    showAlert("Error: " + err.message, "danger");
+  }
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,3 @@
-const loginForm = document.querySelector('form');
-
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -7,6 +5,7 @@ loginForm.addEventListener('submit', async (e) => {
     const password = document.querySelector('input[type="password"]').value;
 
     try {
+
         const response = await fetch(
             'http://127.0.0.1:5001/api/student/login',
             {
@@ -20,24 +19,19 @@ loginForm.addEventListener('submit', async (e) => {
 
         console.log("LOGIN RESPONSE:", data);
 
-        if (response.ok) {
-
-            alert("Login Successful!");
-            localStorage.setItem('token', data.token);
-
-            const studentObj = data.student;
-
-            if (!studentObj || !studentObj.studentId) {
-                alert("Invalid server response");
-                return;
-            }
-
-            window.location.href =
-                `student.html?studentId=${studentObj.studentId}`;
-
-        } else {
+        if (!response.ok) {
             alert(data.message || "Invalid Credentials");
+            return;
         }
+
+        // RESTORED STORAGE OF TOKEN AND STUDENT INFO
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('studentId', data.student.studentId);
+        localStorage.setItem('student', JSON.stringify(data.student));
+
+        alert("Login Successful!");
+
+        window.location.href = "student.html";
 
     } catch (error) {
         console.error("Connection Error:", error);
